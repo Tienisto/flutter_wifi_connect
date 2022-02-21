@@ -34,7 +34,8 @@ class FlutterWifiConnect {
   /// matching explicitly the [ssid] parameter.
   static Future<bool> connect(String ssid, {bool saveNetwork = false}) async {
     final bool connected = await _channel.invokeMethod<bool>(
-        'connect', {'ssid': ssid, 'saveNetwork': saveNetwork});
+            'connect', {'ssid': ssid, 'saveNetwork': saveNetwork}) ??
+        false;
     return connected;
   }
 
@@ -42,8 +43,9 @@ class FlutterWifiConnect {
   /// network with the ssid prefix matching the [ssidPrefix] parameter.
   static Future<bool> connectByPrefix(String ssidPrefix,
       {bool saveNetwork = false}) async {
-    final bool connected = await _channel.invokeMethod<bool>(
-        'prefixConnect', {'ssid': ssidPrefix, 'saveNetwork': saveNetwork});
+    final bool connected = await _channel.invokeMethod<bool>('prefixConnect',
+            {'ssid': ssidPrefix, 'saveNetwork': saveNetwork}) ??
+        false;
     return connected;
   }
 
@@ -56,12 +58,13 @@ class FlutterWifiConnect {
       bool isWpa3 = false,
       bool saveNetwork = false}) async {
     final bool connected = await _channel.invokeMethod<bool>('secureConnect', {
-      'ssid': ssid,
-      'password': password,
-      'saveNetwork': saveNetwork,
-      'isWep': isWep,
-      'isWpa3': isWpa3,
-    });
+          'ssid': ssid,
+          'password': password,
+          'saveNetwork': saveNetwork,
+          'isWep': isWep,
+          'isWpa3': isWpa3,
+        }) ??
+        false;
     return connected;
   }
 
@@ -76,18 +79,20 @@ class FlutterWifiConnect {
       bool saveNetwork = false}) async {
     final bool connected =
         await _channel.invokeMethod<bool>('securePrefixConnect', {
-      'ssid': ssidPrefix,
-      'password': password,
-      'saveNetwork': saveNetwork,
-      'isWep': isWep,
-      'isWpa3': isWpa3,
-    });
+              'ssid': ssidPrefix,
+              'password': password,
+              'saveNetwork': saveNetwork,
+              'isWep': isWep,
+              'isWpa3': isWpa3,
+            }) ??
+            false;
     return connected;
   }
 
   /// The [disconnect] method disconnects from the wifi network if the network
   /// was connected to using one of the [connect] methods.
-  static Future<bool> disconnect() => _channel.invokeMethod('disconnect');
+  static Future<bool> disconnect() async =>
+      await _channel.invokeMethod<bool>('disconnect') ?? false;
 
   /// register wifi network
   static Future register() async {}
@@ -97,7 +102,7 @@ class FlutterWifiConnect {
 
   /// The [ssid] getter returns the currently connected ssid.
   static Future<String> get ssid async {
-    final String ssid = await _channel.invokeMethod<String>('getSSID');
-    return ssid;
+    final String? ssid = await _channel.invokeMethod<String>('getSSID');
+    return ssid!;
   }
 }
